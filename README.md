@@ -1,0 +1,2 @@
+# MCFChat
+MCFChat Plugin
