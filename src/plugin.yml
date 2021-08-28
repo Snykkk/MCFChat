@@ -1,0 +1,9 @@
+name: MCFChat
+version: 1.0.0
+main: snykkk.mcfchat.MCFMain
+author: Snykkk
+softdepend: [PlaceholderAPI]
+api-version: 1.13
+commands:
+  mcfchat:
+  broadcast:

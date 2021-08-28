@@ -1,0 +1,55 @@
+
+prefix: '&7[&e&lMCFChat&7] '
+
+# Choose the format that you want to display on chat
+# default / per-world / world-group
+# default : will use default format
+# per-world : will use separate chat per world
+# world-group : will use world group but only the same group can see chat
+use-format: default
+
+
+default-format: '%displayname% &8»&7%mcf_chatcolor% %message%'
+
+per-world:
+  world: #world name
+    enable: true
+    format: '%displayname% &8»&7%mcf_chatcolor% %message%'
+  world_nether:
+    enable: true
+    format: '%displayname% &8»&7%mcf_chatcolor% %message%'
+  
+world-group:
+  group1: #group name
+    worlds:
+    - world1
+    - world2
+    - world3
+    format: '%displayname% &8»&7%mcf_chatcolor% %message%'
+  group2:
+    worlds:
+    - world4
+    - world5
+    format: '%displayname% &8»&7%mcf_chatcolor% %message%'
+
+#Require permission "mcfchat.bypass"
+#If you have that permission, you can see all messages on per-world, world-group format and all players can see your chat
+bypass-format: '%displayname% &8»&7%mcf_chatcolor% %message%'
+
+chat-color:
+  admin:
+    permission: "mcfchat.admin"
+    color: "&c"
+  mvp:
+    permission: "mcfchat.mvp"
+    color: "&e"
+  vip:
+    permission: "mcfchat.vip"
+    color: "&6"
+
+lang:
+  disable: '&cCan not send message in this world!'
+  not-exists: '&cWorld group name %group% not exist!'
+  reload: '&aThe config has been reloaded!'
+  
+  
