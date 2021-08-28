@@ -21,7 +21,8 @@ public class ChatEvent implements Listener {
 		
 		if (FConfig.fc.getString("use-format").equals("default")) {
 			String chat = FConfig.fc.getString("default-format").replace("&", "§")
-													    .replaceAll("%displayname%", p.getDisplayName());
+													    .replaceAll("%displayname%", p.getDisplayName())
+													    .replaceAll("%mcf_chatcolor%", getColor(p));
 			
 			if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 				chat = PlaceholderAPI.setPlaceholders(p, chat);
@@ -32,7 +33,8 @@ public class ChatEvent implements Listener {
 			String world = p.getWorld().getName();
 			if (p.hasPermission("mcfchat.bypass")) {
 				String chat = FConfig.fc.getString("bypass-format").replace("&", "§")
-														   .replaceAll("%displayname%", p.getDisplayName());
+														   .replaceAll("%displayname%", p.getDisplayName())
+														    .replaceAll("%mcf_chatcolor%", getColor(p));
 
 				if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 					chat = PlaceholderAPI.setPlaceholders(p, chat);
@@ -42,7 +44,8 @@ public class ChatEvent implements Listener {
 				e.setCancelled(true);
 				if (FConfig.fc.getBoolean("per-world." + world + ".enable")) {
 					String chat = FConfig.fc.getString("per-world." + world + ".format").replace("&", "§")
-																				        .replaceAll("%displayname%", p.getDisplayName());
+																				        .replaceAll("%displayname%", p.getDisplayName())
+																					    .replaceAll("%mcf_chatcolor%", getColor(p));
 		
 					if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 						chat = PlaceholderAPI.setPlaceholders(p, chat);
@@ -70,7 +73,8 @@ public class ChatEvent implements Listener {
 			String w = p.getWorld().getName();
 			if (p.hasPermission("mcfchat.bypass")) {
 				String chat = FConfig.fc.getString("bypass-format").replace("&", "§")
-														   .replaceAll("%displayname%", p.getDisplayName());
+														   .replaceAll("%displayname%", p.getDisplayName())
+														    .replaceAll("%mcf_chatcolor%", getColor(p));
 
 				if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 					chat = PlaceholderAPI.setPlaceholders(p, chat);
@@ -97,7 +101,8 @@ public class ChatEvent implements Listener {
 					}
 					
 					String chat = FConfig.fc.getString("world-group." + g + ".format").replace("&", "§")
-						    												  .replaceAll("%displayname%", p.getDisplayName());
+						    												  .replaceAll("%displayname%", p.getDisplayName())
+																			    .replaceAll("%mcf_chatcolor%", getColor(p));
 		
 					if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 						chat = PlaceholderAPI.setPlaceholders(p, chat);
@@ -122,6 +127,15 @@ public class ChatEvent implements Listener {
 				}
 			}
 		}
+	}
+	
+	public String getColor(Player p) {
+		for (String chat : FConfig.fc.getConfigurationSection("chat-color").getKeys(false)) {
+			if (p.hasPermission(FConfig.fc.getString("chat-color." + chat + ".permission"))) {
+				return FConfig.fc.getString("chat-color." + chat + ".color").replaceAll("&", "§");
+			}
+		}
+		return "";
 	}
 
 }
