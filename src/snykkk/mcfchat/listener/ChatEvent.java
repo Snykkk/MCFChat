@@ -1,7 +1,6 @@
 package snykkk.mcfchat.listener;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -41,7 +40,6 @@ public class ChatEvent implements Listener {
 				}
 				e.setFormat(chat.replaceAll("%message%", msg));
 			} else {
-				e.setCancelled(true);
 				if (FConfig.fc.getBoolean("per-world." + world + ".enable")) {
 					String chat = FConfig.fc.getString("per-world." + world + ".format").replace("&", "§")
 																				        .replaceAll("%displayname%", p.getDisplayName())
@@ -50,21 +48,15 @@ public class ChatEvent implements Listener {
 					if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 						chat = PlaceholderAPI.setPlaceholders(p, chat);
 					}
-					
-					for (Player pi : p.getWorld().getPlayers()) {
-						if (pi.hasPermission("mcfchat.bypass")) {
+					Set<Player> recipients = e.getRecipients();
+					for (Player pi : recipients) {
+						if (!pi.getWorld().getName().equals(world) && !pi.hasPermission("mcfchat.bypass")) {
+							recipients.remove(pi);
 							continue;
 						}
-						pi.sendMessage(chat.replaceAll("%message%", msg));
 					}
 					
-					for (Player pi : Bukkit.getOnlinePlayers()) {
-						if (pi.hasPermission("mcfchat.bypass")) {
-							pi.sendMessage(chat.replaceAll("%message%", msg));
-						}
-					}
-					
-					System.out.println(chat.replaceAll("%message%", msg));
+					e.setFormat(chat.replaceAll("%message%", msg));
 				} else {
 					p.sendMessage(FConfig.fc.getString("lang.disable").replaceAll("&", "§"));
 				}
@@ -81,10 +73,11 @@ public class ChatEvent implements Listener {
 				}
 				e.setFormat(chat.replaceAll("%message%", msg));
 			} else {
-				e.setCancelled(true);
 				String g = "";
+
+				Set<Player> recipients = e.getRecipients();
 				
-				List<Player> list = new LinkedList<Player>();
+				recipients.clear();
 				
 				for (String group : FConfig.fc.getConfigurationSection("world-group").getKeys(false)) {
 					for (String world : FConfig.fc.getStringList("world-group." + group + ".worlds")) {
@@ -97,7 +90,7 @@ public class ChatEvent implements Listener {
 				
 				if (FConfig.fc.getConfigurationSection("world-group").getKeys(false).contains(g)) {
 					for (String world : FConfig.fc.getStringList("world-group." + g + ".worlds")) {
-						Bukkit.getWorld(world).getPlayers().forEach(s -> list.add(s));
+						Bukkit.getWorld(world).getPlayers().forEach(s -> recipients.add(s));
 					}
 					
 					String chat = FConfig.fc.getString("world-group." + g + ".format").replace("&", "§")
@@ -108,20 +101,14 @@ public class ChatEvent implements Listener {
 						chat = PlaceholderAPI.setPlaceholders(p, chat);
 					}
 					
-					for (Player pi : list) {
-						if (pi.hasPermission("mcfchat.bypass")) {
-							continue;
-						}
-						pi.sendMessage(chat.replaceAll("%message%", msg)); 
-					}
-					
 					for (Player pi : Bukkit.getOnlinePlayers()) {
 						if (pi.hasPermission("mcfchat.bypass")) {
-							pi.sendMessage(chat.replaceAll("%message%", msg));
+							recipients.add(pi);
 						}
 					}
 					
-					System.out.println(chat.replaceAll("%message%", msg));
+					e.setFormat(chat.replaceAll("%message%", msg));
+
 				} else {
 					p.sendMessage(FConfig.fc.getString("lang.not-exists").replaceAll("%group%", g).replaceAll("&", "§"));
 				}
